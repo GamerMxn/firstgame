@@ -8,6 +8,7 @@ from aliens import Alien
 from time import sleep
 from game_stats import GameStats
 from button import Button
+from scoreboard import Scoreboard
 
 class AlienInvaders:
     #Manage game asssets and game behaviours
@@ -15,22 +16,25 @@ class AlienInvaders:
     def __init__(self):
         #Initialize the game and create game resources
         pygame.init()
+        pygame.display.set_caption("Alien Invaders")
         self.settings = Settings()
         self.screen = pygame.display.set_mode((1600, 900), pygame.FULLSCREEN)
         self.stats = GameStats(self)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
-        pygame.display.set_caption("Alien Invaders")
         self.ship = Ship(self)
         self.bullet = Bullet(self)
         self.bullets = pygame.sprite.Group()
         self.aliens1 = pygame.sprite.Group()
         self.aliens2 = pygame.sprite.Group()
+        self.scores = []
         self.ammo = Ammo(self)
         self.cur_ammo = self.settings.bullet_limit
         self.spawn_alien2_count = 4
         self.a1_kill_amount = 0
+        self.sb = Scoreboard(self)
         self.play_button = Button(self)
+
         
     def run_game(self):
         #Start the game
@@ -108,17 +112,24 @@ class AlienInvaders:
             bullet.update()
             if bullet.rect.bottom <= 0 or bullet.rect.bottom >= self.settings.screen_height or bullet.rect.x <= 0 or bullet.rect.x >= self.settings.screen_width:
                 self.bullets.remove(bullet)
-        alien_n = len(self.aliens1.copy()) + len(self.aliens2.copy())
+        self._check_bullet_alien_collisions()
+
+    def _check_bullet_alien_collisions(self):
+        aliens1 = len(self.aliens1.copy())
         aliens2 = len(self.aliens2.copy())
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens1, True, True)
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens2, True, True)
+        
         if  aliens2 > len(self.aliens2):
-            self._create_aliens()
-            self._create_aliens()
+            for i in range(aliens2 - len(self.aliens2)):
+                self.stats.score += self.settings.alien2_points
+                self._create_aliens()
+                self._create_aliens()
 
-        else:
-            for i in range(alien_n - (len(self.aliens1) + len(self.aliens2))):
+        if  aliens1 > len(self.aliens1):
+            for i in range(aliens1 - len(self.aliens1)):
                 self.a1_kill_amount += 1
+                self.stats.score += self.settings.alien1_points
                 self._create_aliens()
 
     def _create_aliens(self):
@@ -141,9 +152,53 @@ class AlienInvaders:
         alien2.rect = alien2.rect2
         self.aliens2.add(alien2)
 
+    def _inti_scores(self):
+        score1 = Scoreboard(self)
+        score1.place = 1
+        self.scores.append(score1)
+
+        score2 = Scoreboard(self)
+        score2.place = 2
+        self.scores.append(score2)
+
+        score3 = Scoreboard(self)
+        score3.place = 3
+        self.scores.append(score3)
+
+        score4 = Scoreboard(self)
+        score4.place = 4
+        self.scores.append(score4)
+
+        score5 = Scoreboard(self)
+        score5.place = 5
+        self.scores.append(score5)
+
+        score6 = Scoreboard(self)
+        score6.place = 6
+        self.scores.append(score6)
+
+        score7 = Scoreboard(self)
+        score7.place = 7
+        self.scores.append(score7)
+
+        score8 = Scoreboard(self)
+        score8.place = 8
+        self.scores.append(score8)
+
+        score9 = Scoreboard(self)
+        score9.place = 9
+        self.scores.append(score9)
+
+        score10 = Scoreboard(self)
+        score10.place = 10
+        self.scores.append (score10)
+
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
+        self.sb.show_score()
+        for score in self.scores.copy():
+            score._check_score()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         for alien in self.aliens1.sprites():
@@ -157,7 +212,7 @@ class AlienInvaders:
 
     def _ship_hit(self):
         #Respond if ship is hit by alien
-        if self.stats.ships_left > 0:
+        if self.stats.ships_left - 1 != 0:
             self.stats.ships_left -= 1
             self.spawn_alien2_count = 4
             self.a1_kill_amount = 0
@@ -170,18 +225,24 @@ class AlienInvaders:
             sleep(.5)
         else:
             self.stats.game_active = False
+            sleep(1)
+            pygame.mouse.set_visible(True)
 
     def _check_play(self, mouse_pos):
         if self.play_button.rect.collidepoint(mouse_pos):
             self.stats.game_active = True
             self.stats.reset_stats()
-            self.a1_kill_amount = 0
             self.spawn_alien2_count = 4
-            self.cur_ammo = 3
-            self.ship.center_ship()
+            self.a1_kill_amount = 0
             self.aliens1.empty()
             self.aliens2.empty()
             self.bullets.empty()
+            self.scores.clear()
+            self._spawn_alien1()
+            self._inti_scores()
+            self.cur_ammo = 3
+            self.ship.center_ship()
+            pygame.mouse.set_visible(False)
 
 
 if __name__ == "__main__":
