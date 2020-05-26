@@ -24,7 +24,8 @@ class AlienInvaders:
         self.ship = Ship(self)
         self.bullet = Bullet(self)
         self.bullets = pygame.sprite.Group()
-        self.aliens = pygame.sprite.Group()
+        self.aliens1 = pygame.sprite.Group()
+        self.aliens2 = pygame.sprite.Group()
         self.ammo = Ammo(self)
         self.cur_ammo = self.settings.bullet_limit
         self.a1_kill_amount = 0
@@ -91,11 +92,13 @@ class AlienInvaders:
 
     def _update_aliens(self):
         #Update alien positions
-        self._create_aliens()
-        for alien in self.aliens.copy():
+        if len(self.aliens1) + len(self.aliens2) == 0:
+            self._create_aliens()
+        for alien in self.aliens1.copy():
             alien.update()
-        
-        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+        for alien in self.aliens2.copy():
+            alien.update()
+        if pygame.sprite.spritecollideany(self.ship, self.aliens1) or pygame.sprite.spritecollideany(self.ship, self.aliens2):
             self._ship_hit()
 
     def _update_bullets(self):
@@ -104,38 +107,46 @@ class AlienInvaders:
             bullet.update()
             if bullet.rect.bottom <= 0 or bullet.rect.bottom >= self.settings.screen_height or bullet.rect.x <= 0 or bullet.rect.x >= self.settings.screen_width:
                 self.bullets.remove(bullet)
-        alien_n = len(self.aliens.copy())
-        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
-        if len(self.aliens) < alien_n:
-            self.a1_kill_amount += 1
-            self._spawn_alien1()
-            self._spawn_alien1()
+        alien_n = len(self.aliens1.copy()) + len(self.aliens2.copy())
+        aliens2 = len(self.aliens2.copy())
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens1, True, True)
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens2, True, True)
+        if  aliens2 > len(self.aliens2):
+            self._create_aliens()
+            self._create_aliens()
+
+        else:
+            for i in range(alien_n - (len(self.aliens1) + len(self.aliens2))):
+                self.a1_kill_amount += 1
+                self._create_aliens()
 
     def _create_aliens(self):
-        if self.a1_kill_amount == 5:
+        if self.a1_kill_amount > 4:
             self._spawn_alien2()
-        if not len(self.aliens):
+        else:
             self._spawn_alien1()
 
     def _spawn_alien1(self):
-        alien = Alien(self)
-        alien.type = 1
-        alien.rect = alien.rect1
-        self.aliens.add(alien)
+        alien1 = Alien(self)
+        alien1.type = 1
+        alien1.rect = alien1.rect1
+        self.aliens1.add(alien1)
         
     def _spawn_alien2(self):
         self.a1_kill_amount = 0
-        alien = Alien(self)
-        alien.type = 2
-        alien.rect = alien.rect2
-        self.aliens.add(alien)
+        alien2 = Alien(self)
+        alien2.type = 2
+        alien2.rect = alien2.rect2
+        self.aliens2.add(alien2)
 
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
-        for alien in self.aliens.sprites():
+        for alien in self.aliens1.sprites():
+            alien.draw_alien()
+        for alien in self.aliens2.sprites():
             alien.draw_alien()
         if not self.stats.game_active:
             self.play_button.draw_button()
@@ -146,7 +157,9 @@ class AlienInvaders:
         #Respond if ship is hit by alien
         if self.stats.ships_left > 0:
             self.stats.ships_left -= 1
-            self.aliens.empty()
+            self.a1_kill_amount = 0
+            self.aliens1.empty()
+            self.aliens2.empty()
             self.bullets.empty()
             self._spawn_alien1()
             self.cur_ammo = 3
@@ -159,9 +172,11 @@ class AlienInvaders:
         if self.play_button.rect.collidepoint(mouse_pos):
             self.stats.game_active = True
             self.stats.reset_stats()
+            self.a1_kill_amount = 0
             self.cur_ammo = 3
             self.ship.center_ship()
-            self.aliens.empty()
+            self.aliens1.empty()
+            self.aliens2.empty()
             self.bullets.empty()
 
 
