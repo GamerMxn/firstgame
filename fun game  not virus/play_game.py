@@ -28,6 +28,7 @@ class AlienInvaders:
         self.aliens2 = pygame.sprite.Group()
         self.ammo = Ammo(self)
         self.cur_ammo = self.settings.bullet_limit
+        self.spawn_alien2_count = 4
         self.a1_kill_amount = 0
         self.play_button = Button(self)
         
@@ -41,7 +42,7 @@ class AlienInvaders:
                 self._update_bullets()
                 self._update_aliens()
             self._update_screen()
-            
+       
     def _check_events(self):
         #Respond to events
         for event in pygame.event.get():
@@ -121,7 +122,9 @@ class AlienInvaders:
                 self._create_aliens()
 
     def _create_aliens(self):
-        if self.a1_kill_amount > 4:
+        if self.a1_kill_amount > self.spawn_alien2_count:
+            self.spawn_alien2_count += 1
+            self.a1_kill_amount = 0
             self._spawn_alien2()
         else:
             self._spawn_alien1()
@@ -133,7 +136,6 @@ class AlienInvaders:
         self.aliens1.add(alien1)
         
     def _spawn_alien2(self):
-        self.a1_kill_amount = 0
         alien2 = Alien(self)
         alien2.type = 2
         alien2.rect = alien2.rect2
@@ -157,6 +159,7 @@ class AlienInvaders:
         #Respond if ship is hit by alien
         if self.stats.ships_left > 0:
             self.stats.ships_left -= 1
+            self.spawn_alien2_count = 4
             self.a1_kill_amount = 0
             self.aliens1.empty()
             self.aliens2.empty()
@@ -173,6 +176,7 @@ class AlienInvaders:
             self.stats.game_active = True
             self.stats.reset_stats()
             self.a1_kill_amount = 0
+            self.spawn_alien2_count = 4
             self.cur_ammo = 3
             self.ship.center_ship()
             self.aliens1.empty()
