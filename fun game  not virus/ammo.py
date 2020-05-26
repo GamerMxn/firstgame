@@ -14,21 +14,23 @@ class Ammo:
         self.rect0 = self.ammo0.get_rect()
 
     def blitme(self):
-        self.rect3.x = self.ai_game.ship.x - 30
-        self.rect3.y = self.ai_game.ship.y
-        self.rect2.x = self.ai_game.ship.x - 30
-        self.rect2.y = self.ai_game.ship.y
-        self.rect1.x = self.ai_game.ship.x - 30
-        self.rect1.y = self.ai_game.ship.y
-        self.rect0.x = self.ai_game.ship.x - 30
-        self.rect0.y = self.ai_game.ship.y
-
         if self.ai_game.cur_ammo == 3:
+            self.rect3.centerx = self.ai_game.ship.rect.centerx - 30
+            self.rect3.centery = self.ai_game.ship.rect.centery
             self.screen.blit(self.ammo3, self.rect3)
+
         elif self.ai_game.cur_ammo == 2:
+            self.rect2.centerx = self.ai_game.ship.rect.centerx - 30
+            self.rect2.centery = self.ai_game.ship.rect.centery
             self.screen.blit(self.ammo2, self.rect2)
+
         elif self.ai_game.cur_ammo == 1:
+            self.rect1.centerx = self.ai_game.ship.rect.centerx - 30
+            self.rect1.centery = self.ai_game.ship.rect.centery
             self.screen.blit(self.ammo1, self.rect1)
+            
         elif self.ai_game.cur_ammo == 0:
+            self.rect0.centerx = self.ai_game.ship.rect.centerx - 30
+            self.rect0.centery = self.ai_game.ship.rect.centery
             self.screen.blit(self.ammo0, self.rect0)
         

@@ -153,45 +153,11 @@ class AlienInvaders:
         self.aliens2.add(alien2)
 
     def _inti_scores(self):
-        score1 = Scoreboard(self)
-        score1.place = 1
-        self.scores.append(score1)
+        for i in range(1, 11):
+            score = Scoreboard(self)
+            score.place = i
+            self.scores.append(score)
 
-        score2 = Scoreboard(self)
-        score2.place = 2
-        self.scores.append(score2)
-
-        score3 = Scoreboard(self)
-        score3.place = 3
-        self.scores.append(score3)
-
-        score4 = Scoreboard(self)
-        score4.place = 4
-        self.scores.append(score4)
-
-        score5 = Scoreboard(self)
-        score5.place = 5
-        self.scores.append(score5)
-
-        score6 = Scoreboard(self)
-        score6.place = 6
-        self.scores.append(score6)
-
-        score7 = Scoreboard(self)
-        score7.place = 7
-        self.scores.append(score7)
-
-        score8 = Scoreboard(self)
-        score8.place = 8
-        self.scores.append(score8)
-
-        score9 = Scoreboard(self)
-        score9.place = 9
-        self.scores.append(score9)
-
-        score10 = Scoreboard(self)
-        score10.place = 10
-        self.scores.append (score10)
 
     def _update_screen(self):
         self.screen.fill(self.settings.bg_color)
