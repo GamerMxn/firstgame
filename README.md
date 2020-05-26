@@ -1,7 +1,13 @@
-# firstgame
-My first game.
-ESC button to quit game.
-Left Mouseclick to shoot.
-R or SPACE to reload.
-WASD to move.
-Run start_game.py to start the game.
+# Space Fighter
+
+Execute play_game.py to run the game
+
+Controls:
+Escape - Exit Game
+Left MB - Shoot
+R - Reload
+Space - Reload
+W - Up
+A - Left
+S - Down
+D - Right
