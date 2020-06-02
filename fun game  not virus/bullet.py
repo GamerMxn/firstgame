@@ -4,8 +4,10 @@ from pygame.sprite import Sprite
 
 class Bullet(Sprite):
     #Manage bullets fired from ship
+
     def __init__(self, ai_game):
         #Create a bullet from ship's current position
+
         super().__init__()
         self.ai_game = ai_game
         self.screen = ai_game.screen
@@ -19,7 +21,8 @@ class Bullet(Sprite):
         self.dir = ""
 
     def bullet_angle(self):
-        #Change bullet angle
+        #Change bullet angle based on ship angle
+
         if self.ai_game.ship.bullet_dir == "Top": 
             self.bullet1 = pygame.transform.rotate(self.bullet1_rotate, 0)
             self.dir = "Top"
@@ -46,6 +49,8 @@ class Bullet(Sprite):
             self.dir = "Bottom Left"
 
     def update(self):
+        #Update bullet position based on its angle
+
         if self.dir == "Top":
             self.y -= self.settings.bullet_speed
             self.rect.y = self.y
@@ -81,5 +86,6 @@ class Bullet(Sprite):
 
     def draw_bullet(self):
         #Draw the bullet on the screen
+        
         self.screen.blit(self.bullet1, self.rect)
         

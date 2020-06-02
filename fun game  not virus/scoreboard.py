@@ -2,7 +2,11 @@ import pygame
 
 
 class Scoreboard():
+    #Game scoreboard
+
     def __init__(self, ai_game):
+        #Initialize digits 0-9
+
         self.ai_game = ai_game
         self.screen = ai_game.screen
         self.screen_rect = self.screen.get_rect()
@@ -47,6 +51,8 @@ class Scoreboard():
         self.place = 0
 
     def _check_score(self):
+        #Update digit shown in each place based on score
+
         if self.place == 1:
             num = self.stats.score % 10
             self.score_rect_list[num].right = self.screen_rect.right - 17
@@ -99,6 +105,8 @@ class Scoreboard():
 
 
     def show_score(self):
+        #Draw score on screen
+
         self.screen.blit(self.scoreboard, self.sb_rect)
         
 

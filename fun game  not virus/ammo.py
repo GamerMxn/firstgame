@@ -1,6 +1,8 @@
 import pygame
 
 class Ammo:
+    #Control ammo sprites
+
     def __init__(self, ai_game):
         self.ai_game = ai_game
         self.screen = ai_game.screen
@@ -14,6 +16,8 @@ class Ammo:
         self.rect0 = self.ammo0.get_rect()
 
     def blitme(self):
+        #Draw ammo sprite based on current ammo
+
         if self.ai_game.cur_ammo == 3:
             self.rect3.centerx = self.ai_game.ship.rect.centerx - 30
             self.rect3.centery = self.ai_game.ship.rect.centery
