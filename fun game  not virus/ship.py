@@ -1,11 +1,15 @@
 import pygame
+from pygame.sprite import Sprite
 vec = pygame.math.Vector2
 
 
-class Ship:
+class Ship(Sprite):
     #Manage main player ship
 
     def __init__(self, ai_game):
+        #Initialize player ship and starting location
+
+        super().__init__()
         self.ai_game = ai_game
         self.settings = self.ai_game.settings
         self.screen = ai_game.screen

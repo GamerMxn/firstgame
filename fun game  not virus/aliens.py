@@ -31,7 +31,7 @@ class Alien(Sprite):
         #Boss alien initialization
 
         self.alien2anime = 0
-        self.aliens2 = [pygame.image.load('images/alien2.png').convert_alpha(), pygame.image.load('images/alien2.png').convert_alpha(), pygame.image.load('images/alien2.png').convert_alpha(), pygame.image.load('images/alien2.png').convert_alpha()]
+        self.aliens2 = [pygame.image.load('images/alien2_1.png').convert_alpha(), pygame.image.load('images/alien2_2.png').convert_alpha(), pygame.image.load('images/alien2_3.png').convert_alpha(), pygame.image.load('images/alien2_4.png').convert_alpha()]
         self.rect2 = self.aliens2[np.random.randint(0,4)].get_rect()
         self.rand_dir2 = [self.settings.alien2_acc, -self.settings.alien2_acc]
         self.spawn_coord2 = [400, -400, 450, -450, 500, -500, 550, -550, 600, -600]
@@ -51,17 +51,17 @@ class Alien(Sprite):
             self.screen.blit(self.aliens1[self.alien1anime//20], self.rect1)
             self.alien1anime += 1
         elif self.type == 2:
-            if self.alien2anime >= 120:
+            if self.alien2anime >= 40:
                 self.alien2anime = 0
-            self.screen.blit(self.aliens2[self.alien1anime//30], self.rect2)
+            self.screen.blit(self.aliens2[self.alien2anime//10], self.rect2)
             self.alien2anime += 1
 
     def _update_alien1_acc(self):
         #Control minion alien movement
 
         self.acc1 = vec(0, 0)
-        if np.random.randint(120) == 0 and self.randmove1 == 0:
-            self.randmove1 = 50
+        if np.random.randint(self.settings.alien1_random_move_chance) == 0 and self.randmove1 == 0:
+            self.randmove1 = self.settings.alien1_random_move_duration
             self.dir1 = np.random.randint(2)
         if self.randmove1 == 0:
             if self.rect1.centerx < self.ai_game.ship.rect.centerx:
@@ -81,8 +81,8 @@ class Alien(Sprite):
         #Control boss alien movement
 
         self.acc2 = vec(0, 0)
-        if np.random.randint(120) == 0 and self.randmove2 == 0:
-            self.randmove2 = 30
+        if np.random.randint(self.settings.alien2_random_move_chance) == 0 and self.randmove2 == 0:
+            self.randmove2 = self.settings.alien2_random_move_duration
             self.dir2 = np.random.randint(2)
         if self.randmove2 == 0:
             if self.rect2.centerx < self.ai_game.ship.rect.centerx:
