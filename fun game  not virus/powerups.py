@@ -5,6 +5,8 @@ class PowerUp:
     #Creates powerups for the player
 
     def __init__(self, ai_game):
+        #Initialize player powerup
+
         self.ai_game = ai_game
         self.screen = self.ai_game.screen
         self.screen_rect = self.screen.get_rect()

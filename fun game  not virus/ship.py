@@ -18,6 +18,8 @@ class Ship(Sprite):
         self.image_rotate = pygame.image.load('images/ship.png').convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.center = self.screen_rect.center
+        self.y = float(self.rect.centery)
+        self.x = float(self.rect.centerx)
         self.settings = ai_game.settings
         self.angle = 0
         self.moving_right = False
@@ -81,42 +83,46 @@ class Ship(Sprite):
 
         self.acc = vec(0, 0)
         self._update_angle()
-        if self.moving_right and not self.moving_left and self.rect.right < self.screen_rect.right - 20:
+        if self.moving_right and not self.moving_left:
             self.acc.x = self.settings.player_acc
-        if self.moving_left and not self.moving_right and self.rect.left > 20:
+        if self.moving_left and not self.moving_right:
             self.acc.x = -self.settings.player_acc
-        if self.moving_up and not self.moving_down and self.rect.top > 20:
+        if self.moving_up and not self.moving_down:
             self.acc.y = -self.settings.player_acc
-        if self.moving_down and not self.moving_up and self.rect.bottom < self.screen_rect.bottom - 20:
+        if self.moving_down and not self.moving_up:
             self.acc.y = self.settings.player_acc
 
-        self.acc += self.vel * self.settings.player_friction
+        self.acc += self.vel * (self.settings.player_friction)
         self.vel += self.acc
         self.pos += self.vel + (0.5 * self.acc)
-        self.rect.center = self.pos
+        self.x = self.pos.x
+        self.y = self.pos.y
+        self.rect.centerx = self.x
+        self.rect.centery = self.y
 
-        #Check for screen boundaries
+        #Check for screen boundaries, bounce ship off wall
 
         if self.pos.x < self.screen_rect.left + 20:
             self.pos.x = self.screen_rect.left + 20
-        if self.pos.x > self.screen_rect.right - 20:
+            self.vel.x = self.settings.wall_bounce
+        elif self.pos.x > self.screen_rect.right - 20:
             self.pos.x = self.screen_rect.right - 20
+            self.vel.x = -self.settings.wall_bounce
         if self.pos.y < self.screen_rect.top + 20:
             self.pos.y = self.screen_rect.top + 20
-        if self.pos.y > self.screen_rect.bottom - 20:
+            self.vel.y = self.settings.wall_bounce
+        elif self.pos.y > self.screen_rect.bottom - 20:
             self.pos.y = self.screen_rect.bottom - 20
+            self.vel.y = -self.settings.wall_bounce
 
     def center_ship(self):
         #Re-centers ship after death / game start
 
+        self.vel = vec(0, 0)
         self.angle = 0
         self.bullet_dir = "Top"
         self.image = pygame.transform.rotate(self.image_rotate, 0)
         self.pos = (self.screen_rect.centerx, self.screen_rect.centery)
-        self.moving_right = False
-        self.moving_left = False
-        self.moving_up = False
-        self.moving_down = False
     
     def blitme(self):
         #Draws shop on screen

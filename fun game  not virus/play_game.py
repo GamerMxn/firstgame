@@ -1,5 +1,4 @@
-import sys
-import pygame
+import sys, pygame, time
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
@@ -23,11 +22,12 @@ class AlienInvaders:
 
         pygame.init()
         pygame.display.set_caption("Alien Invaders")
-        self.settings = Settings()
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((1600, 900), pygame.FULLSCREEN)
-        self.bg = Background('background_image.png', [0,0])
         self.screen_rect = self.screen.get_rect()
+        self.settings = Settings(self)
+        self.bg_choice = 0
+        self.bg = Background(self.settings.background_choices[self.bg_choice], [0,0])
         self.stats = GameStats(self)
         self.ship = Ship(self)
         self.bullet = Bullet(self)
@@ -35,6 +35,10 @@ class AlienInvaders:
         self.sb = Scoreboard(self)
         self.play_button = Button(self)
         self.fps = Get_FPS(self)
+        self.cur_time = time.time()
+        self.dt = time.time() - self.cur_time
+        self.dt = 0.01666667
+        self.accum = 0.0
         self.bullets = pygame.sprite.Group()
         self.aliens1 = pygame.sprite.Group()
         self.aliens2 = pygame.sprite.Group()
@@ -47,16 +51,20 @@ class AlienInvaders:
 
         while True:
             #Detect keyboard and mouse events
-            self._check_events()
-            self.fps.update_fps()
-            if self.stats.game_active:
-                self.ship.update()
-                self._update_bullets()
-                self._update_aliens()
-                self.sb.update()
-            self._update_screen()
-            self.clock.tick(60)
-       
+
+            self._update_delta()
+            while self.accum >= self.dt:
+                self.fps.update_fps()
+                self._check_events()
+                if self.stats.game_active:
+                    self.ship.update()
+                    self._update_bullets()
+                    self._update_aliens()
+                    self.sb.update()
+                self._update_screen()
+                self.accum -= self.dt
+            self.clock.tick(self.settings.fps_limit)
+
     def _check_events(self):
         #Respond to events and player inputs
 
@@ -192,11 +200,13 @@ class AlienInvaders:
             self.cur_ammo = self.settings.bullet_limit
             self.ship.center_ship()
             sleep(1)
+            self.cur_time = time.time()
         else:
             self.sb.ships_left()
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
             sleep(1)
+            self.cur_time = time.time()
 
     def _check_play(self, mouse_pos):
         #Ending and start screen buttons
@@ -215,15 +225,17 @@ class AlienInvaders:
             self.stats.game_active = True
             pygame.mouse.set_visible(False)
 
-    def _get_fps(self):
-        if self.cur_fps != int(clock.get_fps()):
-            self.fps = font.render(str(int(clock.get_fps())), True, pg.Color('white'))
-        self.cur_fps = int(clock.get_fps())
+    def _update_delta(self):
+        self.frame_time = time.time() - self.cur_time
+        if self.frame_time > 0.25:
+            self.frame_time = 0.25
+        self.cur_time = time.time()
+        self.accum += self.frame_time
 
     def _update_screen(self):
         #Update objects on the screen
 
-        self.screen.blit(self.bg.image, self.bg.rect)
+        self.screen.blit(self.bg.background, self.bg.background_rect)
         self.fps.blitme()
         self.sb.show_score()
 

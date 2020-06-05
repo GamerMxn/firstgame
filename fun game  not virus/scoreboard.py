@@ -11,10 +11,9 @@ class Scoreboard():
 
         super().__init__()
         self.ai_game = ai_game
-        self.screen = ai_game.screen
+        self.screen = self.ai_game.screen
         self.screen_rect = self.screen.get_rect()
-        self.settings = ai_game.settings
-        self.stats = ai_game.stats
+        self.stats = self.ai_game.stats
         self.scoreboard = pygame.image.load('images/scoreboard.png').convert_alpha()
         self.sb_rect = self.scoreboard.get_rect()
         self.sb_rect.top = self.screen_rect.top + 10
